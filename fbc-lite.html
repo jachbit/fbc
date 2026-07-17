@@ -95,6 +95,10 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 /* ── BODY ── */
 .body-wrap{display:flex;flex:1;overflow:hidden;}
 .panels-area{position:relative;flex:1;overflow:hidden;}
+/* ── PAGE FOOTER ── */
+.page-footer{background:var(--navy);color:rgba(255,255,255,.75);font-size:11px;font-weight:600;padding:5px 16px;display:flex;align-items:center;gap:6px;flex-shrink:0;border-top:2px solid var(--orange);}
+.page-footer a{color:var(--orange);text-decoration:none;font-weight:800;}
+.page-footer a:hover{text-decoration:underline;}
 
 /* ── PANEL ── */
 .panel{position:absolute;background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(0,0,0,.5);}
@@ -383,7 +387,7 @@ body.theme-dark .upcoming-hdr,body.theme-ocean .upcoming-hdr,body.theme-charcoal
   <div class="hdr-logo">FBC</div>
   <div>
     <div class="hdr-title">F.O.C.U.S.<sup style="font-size:9px;vertical-align:super;">&copy;</sup> BATCH CONNECT</div>
-    <div class="hdr-sub">BATCHMATES CENTRAL LEDGER &bull; JACHBIT 2026</div>
+    <div class="hdr-sub">BATCHMATES CENTRAL LEDGER &bull; JACHBIT 2026 &bull; <a href="https://linktr.ee/jachbit" target="_blank" style="color:var(--orange);text-decoration:none;font-weight:800;">linktr.ee/jachbit</a></div>
   </div>
 
   <div class="hdr-nav">
@@ -678,6 +682,13 @@ body.theme-dark .upcoming-hdr,body.theme-ocean .upcoming-hdr,body.theme-charcoal
       <button class="btn" onclick="saveSchool()">&#10003; Save School</button>
     </div>
   </div>
+</div>
+
+<!-- PAGE FOOTER -->
+<div class="page-footer">
+  &copy; 2026 Jachbit. All rights reserved. May not be copied or shared without express written consent of the publisher.
+  &nbsp;&bull;&nbsp;
+  <a href="https://linktr.ee/jachbit" target="_blank">linktr.ee/jachbit</a>
 </div>
 
 <!-- PRINT AREA (hidden, shown only during print) -->
@@ -1088,8 +1099,8 @@ function printEvent(idx){
     </div>
 
     <div class="print-footer">
-      <span>F.O.C.U.S. BATCH CONNECT &bull; Jachbit 2026</span>
-      <span>Printed: ${now}</span>
+      <span>F.O.C.U.S.&copy; BATCH CONNECT &bull; Jachbit 2026 &bull; linktr.ee/jachbit</span>
+      <span>&copy; 2026 Jachbit. All rights reserved. May not be copied or shared without express written consent of the publisher. &bull; Printed: ${now}</span>
     </div>`;
   window.print();
 }
@@ -1687,8 +1698,8 @@ function exportPDF(){
     </table>`;
 
   html+=`<div class="print-footer">
-    <span>F.O.C.U.S. BATCH CONNECT &bull; Jachbit 2026</span>
-    <span>Printed: ${now}</span>
+    <span>F.O.C.U.S.&copy; BATCH CONNECT &bull; Jachbit 2026 &bull; linktr.ee/jachbit</span>
+    <span>&copy; 2026 Jachbit. All rights reserved. May not be copied or shared without express written consent of the publisher. &bull; Printed: ${now}</span>
   </div>`;
 
   document.getElementById('print-area').innerHTML=html;
