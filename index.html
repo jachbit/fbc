@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FBC — F.O.C.U.S. Batch Connect</title>
+<!-- Firebase compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 /* ── THEME TOKENS ── */
 :root{
@@ -409,6 +412,7 @@ body.theme-dark .upcoming-hdr,body.theme-ocean .upcoming-hdr,body.theme-charcoal
     </div>
     <div style="width:1px;height:24px;background:rgba(255,255,255,.2);"></div>
     <div class="hdr-stat">Members <b id="hdr-count">0</b></div>
+    <div id="sync-status" style="font-size:11px;font-weight:900;letter-spacing:.5px;">⟳ CONNECTING…</div>
     <div style="width:1px;height:24px;background:rgba(255,255,255,.2);"></div>
     <button class="btn btn-sm btn-outline" onclick="exportJSON()" style="color:#fff;border-color:rgba(255,255,255,.5);">&#8681; Backup</button>
     <button class="btn btn-sm btn-outline" onclick="document.getElementById('import-file').click()" style="color:#fff;border-color:rgba(255,255,255,.5);">&#8679; Import</button>
@@ -724,23 +728,90 @@ const MONTH_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','
 const DOW=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const EV_COLORS=['#e65c00','#002b5c','#008040','#8800cc','#cc6600','#006688'];
 
-let members = JSON.parse(localStorage.getItem('fbc_members')||'[]');
-let events  = JSON.parse(localStorage.getItem('fbc_events') ||'[]');
-let schools = JSON.parse(localStorage.getItem('fbc_schools')||'null')||JSON.parse(JSON.stringify(DEFAULT_SCHOOLS));
+/* ═══════════════════════════════════════════════
+   FIREBASE
+═══════════════════════════════════════════════ */
+firebase.initializeApp({
+  apiKey:"AIzaSyADYp0oAYesLbyDR2RPz3dhBpiqHcH6ytc",
+  authDomain:"fbc-app-22be2.firebaseapp.com",
+  projectId:"fbc-app-22be2",
+  storageBucket:"fbc-app-22be2.firebasestorage.app",
+  messagingSenderId:"731351998510",
+  appId:"1:731351998510:web:f43f44b844e06af843ffbf"
+});
+const db=firebase.firestore();
+const FBC_DOC=db.collection('fbc').doc('data');
+let fbReady=false;
+
+// photos stay local (base64 too large for Firestore doc)
+function getLocalPhotos(){return JSON.parse(localStorage.getItem('fbc_photos')||'{}');}
+function saveLocalPhotos(ph){try{localStorage.setItem('fbc_photos',JSON.stringify(ph));}catch(e){}}
+function memberKey(m){return m.added||(m.firstname+m.lastname);}
+function stripPhotos(arr){return arr.map(m=>{const c={...m};delete c.photo;return c;});}
+function mergePhotos(arr){
+  const ph=getLocalPhotos();
+  return arr.map(m=>({...m,photo:ph[memberKey(m)]||null}));
+}
+
+// Start with localStorage as instant fallback while Firestore loads
+let members=mergePhotos(JSON.parse(localStorage.getItem('fbc_members')||'[]'));
+let events =JSON.parse(localStorage.getItem('fbc_events') ||'[]');
+let schools=JSON.parse(localStorage.getItem('fbc_schools')||'null')||JSON.parse(JSON.stringify(DEFAULT_SCHOOLS));
 
 let editMIdx=null, editEIdx=null, editSchoolIdx=null;
 let tempPhoto=null;
 let sortCol='lastname', sortDir=1;
 
+// Real-time listener — updates UI on any device when data changes
+FBC_DOC.onSnapshot(snap=>{
+  if(snap&&snap.exists){
+    const d=snap.data();
+    members=mergePhotos(d.members||[]);
+    events =d.events||[];
+    schools=d.schools||JSON.parse(JSON.stringify(DEFAULT_SCHOOLS));
+    // cache locally for instant load next visit
+    try{
+      localStorage.setItem('fbc_members',JSON.stringify(members));
+      localStorage.setItem('fbc_events', JSON.stringify(events));
+      localStorage.setItem('fbc_schools',JSON.stringify(schools));
+    }catch(e){}
+  }
+  fbReady=true;
+  document.getElementById('hdr-count').textContent=members.length;
+  renderAll();
+  updateSyncStatus('live');
+},err=>{
+  console.warn('Firestore offline, using local cache:',err);
+  fbReady=false;
+  updateSyncStatus('offline');
+});
+
+function updateSyncStatus(state){
+  let el=document.getElementById('sync-status');
+  if(!el) return;
+  if(state==='live'){el.textContent='● LIVE';el.style.color='#00d070';}
+  else if(state==='saving'){el.textContent='↑ SAVING…';el.style.color='var(--orange)';}
+  else{el.textContent='⚠ OFFLINE';el.style.color='#ff4444';}
+}
+
 /* ═══════════════════════════════════════════════
    SAVE
 ═══════════════════════════════════════════════ */
 function save(){
-  try{
-    localStorage.setItem('fbc_members',JSON.stringify(members));
-    localStorage.setItem('fbc_events', JSON.stringify(events));
-    localStorage.setItem('fbc_schools',JSON.stringify(schools));
-  }catch(e){alert('Storage nearly full. Please export a backup JSON before adding more data.');}
+  // Save photos to localStorage separately
+  const ph=getLocalPhotos();
+  members.forEach(m=>{if(m.photo) ph[memberKey(m)]=m.photo; else delete ph[memberKey(m)];});
+  saveLocalPhotos(ph);
+
+  // Write to Firestore (non-blocking)
+  updateSyncStatus('saving');
+  FBC_DOC.set({
+    members:stripPhotos(members),
+    events,
+    schools,
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+  }).then(()=>updateSyncStatus('live'))
+    .catch(e=>{console.error('Save error:',e);updateSyncStatus('offline');});
 }
 
 /* ═══════════════════════════════════════════════
