@@ -367,17 +367,32 @@ body.theme-dark .upcoming-hdr,body.theme-ocean .upcoming-hdr,body.theme-charcoal
   body{background:#fff!important;color:#000!important;font-size:11pt;}
   .hdr,.body-wrap,.modal-overlay,.confirm-overlay,.prh{display:none!important;}
   #print-area{display:block!important;}
-  #print-area h1{font-size:16pt;font-weight:900;color:#000;margin-bottom:4px;border-bottom:2px solid #000;padding-bottom:4px;}
-  #print-area .print-sub{font-size:10pt;color:#000;margin-bottom:12px;}
-  #print-area table{width:100%;border-collapse:collapse;font-size:9pt;}
-  #print-area thead th{background:none!important;color:#000!important;padding:5px 7px;text-align:left;font-weight:900;font-size:8pt;letter-spacing:.4px;border-bottom:2px solid #000;border-top:1px solid #000;}
-  #print-area tbody tr:nth-child(even){background:#f5f5f5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  #print-area td{padding:4px 7px;border-bottom:1px solid #ccc;vertical-align:top;color:#000;}
+  /* branded header */
+  #print-area .pdf-brand-hdr{display:flex;align-items:center;gap:10px;border-bottom:3px solid #e65c00;padding-bottom:8px;margin-bottom:6px;}
+  #print-area .pdf-logo-box{background:#e65c00;color:#fff;font-weight:900;font-size:13pt;padding:5px 10px;border-radius:3px;letter-spacing:1px;flex-shrink:0;}
+  #print-area .pdf-brand-title{font-size:15pt;font-weight:900;color:#002b5c;letter-spacing:.5px;line-height:1.2;}
+  #print-area .pdf-brand-sub{font-size:9pt;color:#000;font-weight:600;letter-spacing:.5px;}
+  #print-area .pdf-brand-right{margin-left:auto;text-align:right;font-size:9pt;font-weight:700;color:#000;}
+  /* doc title */
+  #print-area h1{font-size:13pt;font-weight:900;color:#000;margin:10px 0 3px;border-bottom:1px solid #000;padding-bottom:3px;}
+  #print-area .print-sub{font-size:9pt;color:#000;margin-bottom:10px;}
+  /* tables */
+  #print-area table{width:100%;border-collapse:collapse;font-size:8.5pt;}
+  #print-area thead th{background:none!important;color:#000!important;padding:4px 6px;text-align:left;font-weight:900;font-size:8pt;letter-spacing:.4px;border-bottom:2px solid #000;border-top:1px solid #000;}
+  #print-area tbody tr{background:#fff!important;}
+  #print-area td{padding:3px 6px;border-bottom:1px solid #ddd;vertical-align:top;color:#000;}
   #print-area .pbadge{display:inline-block;padding:1px 5px;border-radius:2px;font-size:7pt;font-weight:900;margin:1px;}
-  #print-area .pe{background:#1a6a1a;color:#fff;}
-  #print-area .ph{background:#1a3a8a;color:#fff;}
-  #print-area .pc{background:#5a0a7a;color:#fff;}
-  #print-area .print-footer{margin-top:12px;font-size:8pt;color:#000;border-top:1px solid #aaa;padding-top:6px;display:flex;justify-content:space-between;}
+  #print-area .pe{background:#1a6a1a;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  #print-area .ph{background:#1a3a8a;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  #print-area .pc{background:#5a0a7a;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  /* section group headers */
+  #print-area .grp-hdr{padding:4px 8px;border-left:4px solid #000;font-size:10pt;font-weight:900;color:#000;background:none!important;margin-top:14px;margin-bottom:2px;}
+  /* summary box */
+  #print-area .pdf-summary{margin-top:14px;padding:7px 12px;border:2px solid #000;display:flex;gap:20px;flex-wrap:wrap;align-items:center;}
+  /* footer */
+  #print-area .print-footer{margin-top:14px;font-size:7.5pt;color:#000;border-top:1px solid #aaa;padding-top:5px;display:flex;justify-content:space-between;}
+  /* verse */
+  #print-area .pdf-verse{margin-top:10px;font-size:8pt;color:#000;font-style:italic;text-align:center;border-top:1px solid #ddd;padding-top:6px;}
   @page{margin:15mm;size:A4 landscape;}
 }
 #print-area{display:none;}
@@ -1120,21 +1135,19 @@ function printEvent(idx){
   function memberRows(list, startNum){
     return list.map((m,i)=>{
       const fullname=[m.prefix,m.firstname,m.lastname,m.suffix].filter(Boolean).join(' ');
-      return `<tr style="background:${i%2===0?'#ffffff':'#f7f9fc'};">
+      return `<tr>
         <td style="text-align:center;color:#000;width:30px;">${startNum+i}</td>
-        <td style="font-weight:900;font-size:12pt;color:#000;">${m.lastname||'—'}</td>
-        <td style="font-size:11pt;color:#000;">${fullname}</td>
-        <td style="font-style:italic;color:#000;font-size:11pt;">${m.nickname?'"'+m.nickname+'"':'—'}</td>
+        <td style="font-weight:900;font-size:11pt;color:#000;">${m.lastname||'—'}</td>
+        <td style="font-size:10pt;color:#000;">${fullname}</td>
+        <td style="font-style:italic;color:#000;font-size:10pt;">${m.nickname?'"'+m.nickname+'"':'—'}</td>
       </tr>`;
     }).join('');
   }
 
-  function groupSection(label, bgColor, textColor, borderColor, list, startNum){
+  function groupSection(label, borderColor, list, startNum){
     if(!list.length) return '';
     return `
-      <div style="margin-top:16px;padding:5px 10px;background:${bgColor};border-left:5px solid ${borderColor};color:${textColor};font-size:12pt;font-weight:900;letter-spacing:.5px;">
-        ${label} &nbsp;<span style="font-size:10pt;font-weight:700;">(${list.length})</span>
-      </div>
+      <div class="grp-hdr" style="border-left-color:${borderColor};">${label} &nbsp;<span style="font-size:9pt;font-weight:700;">(${list.length})</span></div>
       <table>
         <thead><tr>
           <th style="width:30px;">#</th>
@@ -1147,6 +1160,14 @@ function printEvent(idx){
   }
 
   document.getElementById('print-area').innerHTML=`
+    <div class="pdf-brand-hdr">
+      <div class="pdf-logo-box">FBC</div>
+      <div>
+        <div class="pdf-brand-title">F.O.C.U.S.<sup>&copy;</sup> BATCH CONNECT</div>
+        <div class="pdf-brand-sub">BATCHMATES CENTRAL LEDGER &bull; JACHBIT 2026 &bull; linktr.ee/jachbit</div>
+      </div>
+      <div class="pdf-brand-right">EVENT ATTENDEE LIST<br>${now}</div>
+    </div>
     <h1>&#128197; ${ev.title}</h1>
     <div class="print-sub">
       ${dateLabel}${timeLabel}
@@ -1155,22 +1176,23 @@ function printEvent(idx){
       ${ev.desc?' &bull; <i>'+ev.desc+'</i>':''}
     </div>
 
-    ${groupSection('✓ CONFIRMED ATTENDEES','#e6f9ee','#004d00','#006600', grpYes, 1)}
-    ${groupSection('? MAYBE','#fffbe6','#5a4000','#aa8800', grpMaybe, 1)}
-    ${groupSection('✕ NOT ATTENDING','#fdecea','#6b0000','#cc0000', grpNo, 1)}
-    ${grpPend.length?groupSection('— PENDING / NO RESPONSE','#f5f5f5','#444','#999', grpPend, 1):''}
+    ${groupSection('&#10003; CONFIRMED ATTENDEES','#006600', grpYes, 1)}
+    ${groupSection('? MAYBE','#aa8800', grpMaybe, 1)}
+    ${groupSection('&#10005; NOT ATTENDING','#cc0000', grpNo, 1)}
+    ${grpPend.length?groupSection('&mdash; PENDING / NO RESPONSE','#999999', grpPend, 1):''}
 
-    <div style="margin-top:20px;padding:10px 14px;background:#fff;color:#000;border:2px solid #000;display:flex;gap:24px;flex-wrap:wrap;">
-      <span style="font-size:13pt;font-weight:900;color:#000;">SUMMARY</span>
-      <span style="font-size:13pt;color:#000;">✓ Attending: <b>${countYes}</b></span>
-      <span style="font-size:13pt;color:#000;">? Maybe: <b>${countMaybe}</b></span>
-      <span style="font-size:13pt;color:#000;">✕ Not Attending: <b>${countNo}</b></span>
-      <span style="font-size:13pt;color:#000;">— Pending: <b>${countPend}</b></span>
-      <span style="font-size:13pt;font-weight:900;color:#000;margin-left:auto;">Total Invited: ${evMembers.length}</span>
+    <div class="pdf-summary">
+      <span style="font-size:11pt;font-weight:900;color:#000;">SUMMARY</span>
+      <span style="font-size:11pt;color:#000;">&#10003; Attending: <b>${countYes}</b></span>
+      <span style="font-size:11pt;color:#000;">? Maybe: <b>${countMaybe}</b></span>
+      <span style="font-size:11pt;color:#000;">&#10005; Not Attending: <b>${countNo}</b></span>
+      <span style="font-size:11pt;color:#000;">&mdash; Pending: <b>${countPend}</b></span>
+      <span style="font-size:11pt;font-weight:900;color:#000;margin-left:auto;">Total Invited: ${evMembers.length}</span>
     </div>
+    <div class="pdf-verse">"Where two or three gather in my name, there am I with them." — Matthew 18:20</div>
 
     <div class="print-footer">
-      <span>F.O.C.U.S.&copy; BATCH CONNECT &bull; Jachbit 2026 &bull; linktr.ee/jachbit</span>
+      <span>F.O.C.U.S.<sup>&copy;</sup> BATCH CONNECT &bull; Jachbit 2026 &bull; linktr.ee/jachbit</span>
       <span>&copy; 2026 Jachbit. All rights reserved. May not be copied or shared without express written consent of the publisher. &bull; Printed: ${now}</span>
     </div>`;
   window.print();
@@ -1736,40 +1758,49 @@ function exportPDF(){
   function memberRow(m,num){
     const bday=m.birthday?new Date(m.birthday+'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}):'—';
     const loc=[m.city,m.country].filter(Boolean).join(', ')||'—';
-    const status=m.status==='deceased'?'<span style="color:#cc0000;">✝ Deceased</span>':'Active';
-    const name=`<b>${m.lastname||''}</b>${m.suffix?' '+m.suffix:''}, ${m.prefix?m.prefix+' ':''}${m.firstname||''}${m.maiden?'<br><small style="color:#666;">née '+m.maiden+'</small>':''}${m.nickname?'<br><i style="color:#555;">"'+m.nickname+'"</i>':''}`;
+    const status=m.status==='deceased'?'<span style="color:#cc0000;">&#10013; Deceased</span>':'Active';
+    const name=`<b>${m.lastname||''}</b>${m.suffix?' '+m.suffix:''}, ${m.prefix?m.prefix+' ':''}${m.firstname||''}${m.maiden?'<br><small>née '+m.maiden+'</small>':''}${m.nickname?'<br><i>"'+m.nickname+'"</i>':''}`;
     const scBatch=(m.schools||[]).map(s=>{
       const sx=schools.find(x=>x.id===s.schoolId);
       if(!sx) return '';
       return `${sx.abbr}${s.year?" BATCH '"+String(s.year).slice(-2):''}`;
     }).filter(Boolean).join(' · ');
     return `<tr>
-      <td style="text-align:center;color:#666;">${num}</td>
-      <td>${name}</td>
-      <td style="font-size:7.5pt;color:#444;">${scBatch||'—'}</td>
-      <td>${loc}</td>
-      <td>${m.contact||'—'}${m.email?'<br><span style="color:#555;font-size:7pt;">'+m.email+'</span>':''}</td>
-      <td>${bday}</td>
-      <td>${status}</td>
-      <td style="color:#555;font-size:7.5pt;">${m.notes||''}</td>
+      <td style="text-align:center;color:#000;">${num}</td>
+      <td style="color:#000;">${name}</td>
+      <td style="font-size:7.5pt;color:#000;">${scBatch||'—'}</td>
+      <td style="color:#000;">${loc}</td>
+      <td style="color:#000;">${m.contact||'—'}${m.email?'<br><span style="font-size:7pt;">'+m.email+'</span>':''}</td>
+      <td style="color:#000;">${bday}</td>
+      <td style="color:#000;">${status}</td>
+      <td style="font-size:7.5pt;color:#000;">${m.notes||''}</td>
     </tr>`;
   }
 
   const rowsHtml=rows.map((m,i)=>memberRow(m,i+1)).join('')
-    ||'<tr><td colspan="8" style="text-align:center;padding:20px;color:#888;">No members match the current filter.</td></tr>';
+    ||'<tr><td colspan="8" style="text-align:center;padding:20px;color:#000;">No members match the current filter.</td></tr>';
 
-  let html=`<h1>&#128100; F.O.C.U.S. BATCH CONNECT — BATCHMATES ROSTER</h1>
-    <div class="print-sub">${filterLabel} &bull; ${rows.length} member${rows.length!==1?'s':''} &bull; Printed: ${now} &bull; Jachbit 2026</div>
+  let html=`
+    <div class="pdf-brand-hdr">
+      <div class="pdf-logo-box">FBC</div>
+      <div>
+        <div class="pdf-brand-title">F.O.C.U.S.<sup>&copy;</sup> BATCH CONNECT</div>
+        <div class="pdf-brand-sub">BATCHMATES CENTRAL LEDGER &bull; JACHBIT 2026 &bull; linktr.ee/jachbit</div>
+      </div>
+      <div class="pdf-brand-right">BATCHMATES ROSTER<br>${now}</div>
+    </div>
+    <div class="print-sub">${filterLabel} &bull; ${rows.length} member${rows.length!==1?'s':''}</div>
     <table>
       <thead><tr>
         <th style="width:24px;">#</th><th>NAME</th><th>SCHOOL / BATCH</th>
         <th>LOCATION</th><th>CONTACT</th><th>BIRTHDAY</th><th>STATUS</th><th>NOTES</th>
       </tr></thead>
       <tbody>${rowsHtml}</tbody>
-    </table>`;
+    </table>
+    <div class="pdf-verse">"A friend loves at all times, and a brother is born for a time of adversity." — Proverbs 17:17</div>`;
 
   html+=`<div class="print-footer">
-    <span>F.O.C.U.S.&copy; BATCH CONNECT &bull; Jachbit 2026 &bull; linktr.ee/jachbit</span>
+    <span>F.O.C.U.S.<sup>&copy;</sup> BATCH CONNECT &bull; Jachbit 2026 &bull; linktr.ee/jachbit</span>
     <span>&copy; 2026 Jachbit. All rights reserved. May not be copied or shared without express written consent of the publisher. &bull; Printed: ${now}</span>
   </div>`;
 
