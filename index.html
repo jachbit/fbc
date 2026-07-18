@@ -398,54 +398,56 @@ body.theme-dark .upcoming-hdr,body.theme-ocean .upcoming-hdr,body.theme-charcoal
 #print-area{display:none;}
 
 /* ── RESPONSIVE — TABLET & MOBILE ── */
-@media (max-width:900px){
-  /* body scrollable on small screens */
-  body{height:auto;overflow:auto;}
-  .body-wrap{flex-direction:column;overflow:visible;}
-  .panels-area{overflow:visible;height:auto;}
+@media screen and (max-width:900px){
+  /* body scrollable */
+  body{height:auto!important;overflow:auto!important;}
+  .body-wrap{flex-direction:column!important;overflow:visible!important;height:auto!important;}
+  .panels-area{overflow:visible!important;height:auto!important;}
 
-  /* header: 2-row stack */
-  .hdr{flex-wrap:wrap;padding:8px 10px;gap:8px;}
-  .hdr-nav{margin-left:0;flex-wrap:wrap;gap:4px;order:3;width:100%;}
-  .nav-btn{padding:5px 10px;font-size:12px;}
-  .hdr-right{flex-wrap:wrap;gap:7px;order:4;width:100%;margin-left:0;}
-  .hdr-date{display:none;}
-  .theme-sw span{display:none;}/* hide "THEME:" label */
+  /* header: stack into rows */
+  .hdr{flex-wrap:wrap!important;padding:8px 10px!important;gap:6px!important;align-items:flex-start!important;}
+  .hdr-logo{flex-shrink:0;}
+  .hdr-nav{margin-left:0!important;flex-wrap:wrap!important;gap:4px!important;order:3!important;width:100%!important;}
+  .nav-btn{padding:5px 10px!important;font-size:12px!important;}
+  .hdr-right{flex-wrap:wrap!important;gap:6px!important;order:4!important;width:100%!important;margin-left:0!important;}
+  .hdr-date{display:none!important;}
+  .theme-sw span{display:none!important;}
 
-  /* panels: normal flow, full width, tall */
+  /* panels: normal flow */
   .panel{position:relative!important;left:auto!important;top:auto!important;
          right:auto!important;bottom:auto!important;width:100%!important;
-         height:auto!important;min-height:60vh;border-radius:0;border-left:0;border-right:0;}
-  .prh{display:none;}/* hide resize handles */
+         height:auto!important;min-height:60vh!important;
+         border-radius:0!important;border-left:0!important;border-right:0!important;}
+  .prh{display:none!important;}
 
-  /* tables: horizontal scroll */
-  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  table{min-width:600px;}
+  /* tables: scroll horizontally */
+  .tbl-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;}
+  table{min-width:480px!important;}
 
-  /* hide less-critical columns on mobile */
-  .td-hide-mob{display:none;}
+  /* hide less-critical columns */
+  .td-hide-mob{display:none!important;}
 
-  /* page footer wrap */
-  .page-footer{flex-direction:column;text-align:center;gap:3px;font-size:10px;}
+  /* footer */
+  .page-footer{flex-direction:column!important;text-align:center!important;gap:3px!important;font-size:10px!important;}
 
-  /* toolbar wraps */
-  .toolbar{flex-wrap:wrap;gap:5px;padding:7px 8px;}
-  .tb-search{width:100%;min-width:0;}
-  .tb-select{font-size:12px;}
+  /* toolbar */
+  .toolbar{flex-wrap:wrap!important;gap:5px!important;padding:7px 8px!important;}
+  .tb-search{width:100%!important;min-width:0!important;}
+  .tb-select{font-size:12px!important;}
 
-  /* member modal full-width */
-  .modal-box{width:96vw!important;max-width:none!important;margin:10px auto;}
+  /* modal */
+  .modal-box{width:96vw!important;max-width:none!important;margin:10px auto!important;}
 }
 
-@media (max-width:480px){
-  .hdr-logo{font-size:12px;padding:4px 7px;}
-  .hdr-title{font-size:13px;}
-  .hdr-sub{font-size:10px;}
-  .nav-btn{padding:4px 8px;font-size:11px;}
-  .hdr-stat,.hdr-date{font-size:11px;}
-  #sync-status{font-size:10px;}
-  .btn.btn-sm{font-size:11px;padding:4px 8px;}
-  .panel{min-height:70vh;}
+@media screen and (max-width:480px){
+  .hdr-logo{font-size:12px!important;padding:4px 7px!important;}
+  .hdr-title{font-size:13px!important;}
+  .hdr-sub{font-size:10px!important;}
+  .nav-btn{padding:4px 8px!important;font-size:11px!important;}
+  .hdr-stat{font-size:11px!important;}
+  #sync-status{font-size:10px!important;}
+  .btn.btn-sm{font-size:11px!important;padding:4px 8px!important;}
+  .panel{min-height:70vh!important;}
 }
 </style>
 </head>
